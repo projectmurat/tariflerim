@@ -1,0 +1,372 @@
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    10% {
+        background-position: 25% 50%;
+    }
+
+    20% {
+        background-position: 50% 50%;
+    }
+
+    30% {
+        background-position: 75% 50%;
+    }
+
+    40% {
+        background-position: 100% 50%;
+    }
+
+    50% {
+        background-position: 75% 50%;
+    }
+
+    60% {
+        background-position: 50% 50%;
+    }
+
+    70% {
+        background-position: 25% 50%;
+    }
+
+    80% {
+        background-position: 0% 50%;
+    }
+
+    90% {
+        background-position: 25% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(90deg, #ab014a, #eb1c74, #0661ff, #bbc1f9);
+    background-size: 300% 300%;
+    /* Bu değeri artırdık */
+    animation: gradientAnimation 8s infinite;
+    /* Süreyi 10 saniyeye çıkardık */
+}
+
+.mdl-button {
+    background-color: rgb(229, 240, 144);
+    width: 150px;
+    height: 50px;
+    color: rgb(0, 0, 0);
+    margin-top: 10px;
+}
+
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+}
+
+.modal-dialog {
+    width: 80%;
+    max-width: 600px;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 1px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    overflow-x: auto;
+    overflow-y: auto;
+    height: 600px;
+}
+
+.modal-header {
+    padding: 10px;
+    background-color: #fafafa; /* Arka plan rengini daha açık bir gri yapalım */
+    border-bottom: 1px solid #e5e5e5;
+    border-radius: 20px; /* Köşeleri yuvarlak yapmak için */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Hafif bir gölge efekti */
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+}
+.modal-title {
+    transform: rotateX(0deg);
+    transition: transform 0.5s, opacity 0.5s;
+    opacity: 1;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+}
+
+.modal-header:hover .modal-title {
+    transform: rotateX(5deg); /* Hover efekti ile başlığı hafifçe döndürelim */
+    opacity: 0.9; /* Başlığın opaklığını azaltarak soluk bir efekt oluşturalım */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+#popup-info-period-msg {
+    color: #666; /* Metni daha soluk bir renge ayarlayalım */
+}
+
+
+.modal-footer {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-add-installment,
+.btn-close {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-add-installment,
+.btn-close:hover {
+    background-color: #c0392b;
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.periodButton {
+    padding: 8px 16px;
+    margin-left: 8px;
+    border-radius: 8px;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 10px; /* mobilde bir sonraki butonla arasında boşluk oluşturma */
+    width: 100%; /* ekranın tam genişliğine yayılma */
+}
+
+/* Ekstra Stiller için Medya Sorgusu */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #periodDropDown {
+        margin-right: 0; /* margin'i kaldırma */
+        width: 100%; /* ekranın tam genişliğine yayılma */
+    }
+
+    .periodButton {
+        margin-left: 0; /* margin'i kaldırma */
+    }
+}
+/*ÜST BUTON TASARIMI*/
+
+.generalTitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    color: rgb(201, 197, 197);
+    text-align: center;
+    padding: 20px 0;
+    background-color: transparent;  /* Eğer bir arka plan rengi isterseniz */
+    border-radius: 10px;     /* Kenarları yumuşatmak için */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);  /* Hafif bir gölge ekleyerek derinlik hissi katalım */
+}
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 600px) {
+    #mainContainer {
+        padding: 10px;
+    }
+
+    #inputContainer input, #inputContainer button {
+        font-size: 14px;
+    }
+
+    #sonucTablosu th, #sonucTablosu td {
+        padding: 5px;
+        font-size: 12px;
+    }
+}
+
+/* Modal Body Tasarımı */
+.modal-body {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.modal-body h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-group button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-group button:hover {
+    background-color: #0056b3;
+}
+
+.recipe-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.recipe-card {
+    /* Diğer stil tanımlamaları */
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.recipe-card h2 {
+    /* Başlığın stilini ayarlayın, örneğin büyüklüğü, renk vb. */
+}
+
+.recipe-card p {
+    display: none; /* Açıklamayı gizle */
+}
+
+/* Tarif fotoğrafı stilini tanımlama */
+.recipe-card img {
+    max-width: 100%;
+    display: block;
+}
+
+.recipe-card .recipe-detail {
+    display: none; /* Ayrıntıları varsayılan olarak gizle */
+}
+
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.avg-time {
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Modal Stil */
+.modal-content {
+    border-radius: 10px;
+    /* Yuvarlatılmış Köşeler */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Gölge Ekleme */
+    overflow-y: auto;
+    /* Resimlerin veya içeriğin köşelerden taşmaması için */
+}
+
+/* Modal Animasyon */
+.fade .modal-dialog {
+    transform: scale(0.9);
+    /* Başlangıç boyutunu biraz küçült */
+    transition: transform 0.3s;
+    /* 300ms süreyle yumuşak bir geçiş animasyonu */
+    opacity: 0;
+    /* Başlangıçta gizle */
+}
+
+.fade.show .modal-dialog {
+    transform: scale(1);
+    /* Normal boyuta geri dön */
+    opacity: 1;
+    /* Tamamen görünür yap */
+}
+
+
