@@ -1,7 +1,29 @@
 {
-    "key":{
-        "name":"Mercimek Çorbası",
-        "detail":"2 Yemek kaşığı tatlı, 3 çorba kaşığı un, şeker, tuz, 2 yemek kaşığı yağ, Hafifçe Pişirdikten sonra yemeği ocaktan al, Yağı ekle ve bekle",
-        "image":""
+    "-NhAgAJEiycsKFJqxy9K":{
+        "name": "Omlet Tava",
+        "image": "https://cdn.yemek.com/mncrop/600/315/uploads/2018/08/peynirli-omlet-asama-9.jpg",
+        "detail": "2 Bardak Süt, 5 Yumurta, Yağ, Tuz, Yumurtaları bir kaba kır ve süt döküp karıştır,ardından tuzunu dök ve yağını koy,pişir",
+        "type": "Kahvaltılık",
+        "avgFinish": "35",
+        "createDate":"13 Eki 2023 Cum 09:16:46",
+        "updateDate":"13 Eki 2023 Cum 10:07:33"
+    },
+    "-bBAgAJEiycsKFJqxy9K":{
+        "name": "Mercimek Çorbası",
+        "image": "https://cdn.yemek.com/mnresize/940/940/uploads/2014/06/mercimek-corbasi-yemekcom.jpg",
+        "detail": "3 yemek kaşığı ayçiçek yağı,1 adet kuru soğan,1 yemek kaşığı un,1 adet havuç,1 adet patates",
+        "type": "Çorbalar",
+        "avgFinish": "45",
+        "createDate":"13 Eki 2023 Cum 09:18:46",
+        "updateDate":"13 Eki 2023 Cum 10:02:53"
+    },
+    "-tTAgAJEiycsKFJqxy9K":{
+        "name": "Revani",
+        "image": "https://cdn.yemek.com/mnresize/940/940/uploads/2014/06/revani-yemekcom.jpg",
+        "detail": "3 adet yumurta,1 çay bardağı toz şeker,1 çay bardağı ayçiçek yağı,1 su bardağı irmik,1.5 su bardağı un",
+        "type": "Tatlılar",
+        "avgFinish": "65",
+        "createDate":"13 Eki 2023 Cum 09:24:46",
+        "updateDate":"13 Eki 2023 Cum 10:17:44"
     }
 }

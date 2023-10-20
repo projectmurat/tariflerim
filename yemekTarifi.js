@@ -2,6 +2,61 @@
 const recipeContainer = document.getElementById('recipeContainer');
 // Tarif eklemek için formu seçin
 const recipeForm = document.getElementById('recipeForm');
+var data;
+var currentRecipes;
+let selectedType;
+var selectedRecipe;
+firebase.database().ref("/").on("value", (snapshot) => {
+    data = transformData(snapshot.val());
+    currentRecipes = data;
+    displayRecipes(data);
+
+})
+
+function transformData(data) {
+    const result = [];
+
+    for (const key in data) {
+        const item = data[key];
+        item.id = key;
+        result.push(item);
+    }
+
+    return result;
+}
+function compressImage(base64Data, outputFormat = 'image/jpeg', quality = 0.5, maxWidth = 800) {
+    return new Promise((resolve, reject) => {
+        let img = new Image();
+        img.src = base64Data;
+
+        img.onload = function () {
+            let canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth) {
+                const ratio = maxWidth / width;
+                width = maxWidth;
+                height = height * ratio;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const newDataUri = canvas.toDataURL(outputFormat, quality);
+            resolve(newDataUri);
+        };
+
+        img.onerror = function () {
+            reject(new Error("Resim yüklenirken bir hata oluştu."));
+        };
+    });
+}
+
 
 // Fotoğrafı base64 formatına çevirip boyutunu düşüren fonksiyon
 async function resizeAndConvertToBase64(file) {
@@ -41,6 +96,7 @@ recipeForm.addEventListener('submit', async function (e) {
     // Kullanıcının girdiği bilgileri alın
     const title = document.getElementById('recipeTitle').value;
     const description = document.getElementById('recipeDescription').value;
+    const avgPreparationTime = document.getElementById("avgPreparationTime").value
 
     // Dosya seçimi kontrolü
     const imageInput = document.getElementById('recipeImageUpload');
@@ -53,64 +109,44 @@ recipeForm.addEventListener('submit', async function (e) {
     let imageBase64;
     try {
         imageBase64 = await resizeAndConvertToBase64(image);
+        compressImage(imageBase64).then(compressedData => {
+
+            const DATE_NOW = new Date().toLocaleDateString('tr-TR', { weekday: "short", year: "numeric", month: "short", day: "numeric" }) + " " + new Date().toLocaleTimeString('tr-TR');
+
+            const selectElement = document.getElementById("recipeFilterAdd");
+            const selectedValue = selectElement.options[selectElement.selectedIndex].value;
+            console.log(selectedValue);
+
+            var insertData = {
+                "avgFinish": avgPreparationTime,
+                "createDate": DATE_NOW,
+                "detail": description,
+                "image": compressedData,
+                "name": title,
+                "type": selectedValue,
+                "updateDate": DATE_NOW
+            }
+
+            firebase.database().ref("/").push().set(insertData, error => {
+                if (error) {
+                    throw new Error("insert comment error", error).stack;
+                }
+                else {
+                    console.log("tarif eklendi.");
+                }
+            })
+
+        }).catch(error => {
+            console.error(error);
+        });
     } catch (error) {
         console.error("Resim dönüştürme hatası:", error);
         return;
     }
-
-    // Tarif kartını oluşturun
-    const recipeCard = document.createElement('div');
-    recipeCard.classList.add('recipe-card');
-
-    // Tarif başlığını ekleyin
-    const titleElement = document.createElement('h2');
-    titleElement.textContent = title;
-    recipeCard.appendChild(titleElement);
-
-    // Tarif açıklamasını ekleyin
-    const descriptionElement = document.createElement('p');
-    descriptionElement.textContent = description;
-    recipeCard.appendChild(descriptionElement);
-
-    // Fotoğrafı ekleyin
-    const imageElement = document.createElement('img');
-    imageElement.src = imageBase64;
-    recipeCard.appendChild(imageElement);
-
-    // Tarif kartını sayfaya ekleyin
-    recipeContainer.appendChild(recipeCard);
-
-    // Formu temizleyin
-    recipeForm.reset();
 });
 
 
-var data = [
-    {
-        "name": "Omlet Tava",
-        "image": "https://cdn.yemek.com/mncrop/600/315/uploads/2018/08/peynirli-omlet-asama-9.jpg",
-        "detail": "2 Bardak Süt, 5 Yumurta, Yağ, Tuz, Yumurtaları bir kaba kır ve süt döküp karıştır,ardından tuzunu dök ve yağını koy,pişir",
-        "type": "Kahvaltılık",
-        "avgFinish": "35"//min
-    },
-    {
-        "name": "Mercimek Çorbası",
-        "image": "https://cdn.yemek.com/mnresize/940/940/uploads/2014/06/mercimek-corbasi-yemekcom.jpg",
-        "detail": "3 yemek kaşığı ayçiçek yağı,1 adet kuru soğan,1 yemek kaşığı un,1 adet havuç,1 adet patates",
-        "type": "Çorbalar",
-        "avgFinish": "45"//min
-    },
-    {
-        "name": "Revani",
-        "image": "https://cdn.yemek.com/mnresize/940/940/uploads/2014/06/revani-yemekcom.jpg",
-        "detail": "3 adet yumurta,1 çay bardağı toz şeker,1 çay bardağı ayçiçek yağı,1 su bardağı irmik,1.5 su bardağı un",
-        "type": "Tatlılar",
-        "avgFinish": "65"//min
-    }
-];
 
-// Yeni bir üst kapsamdaki değişken
-var currentRecipes = data;
 
 function displayRecipes(recipes) {
     const recipeCards = document.getElementById("recipeCards");
@@ -120,20 +156,136 @@ function displayRecipes(recipes) {
         let card = document.createElement('div');
         card.className = 'col-md-4 mb-4';
         card.innerHTML = `
-    <div class="card" data-toggle="modal" data-target="#recipeModal" data-index="${index}">
-        <img class="card-img-top" src="${recipe.image}" alt="${recipe.name}">
-        <div class="card-body">
-            <h5 class="card-title">${recipe.name}</h5>
-            <div class="avg-time">Ortalama Hazırlanış Süresi: ${recipe.avgFinish} dk</div>
-        </div>
-    </div>
-`;
+            <div class="card" data-toggle="modal" data-target="#recipeModal" data-index="${index}">
+                <img class="card-img-top recipe-image" id="${recipe.id}" src="${recipe.image}" alt="${recipe.name}" height = "200px">
+                <input type="file" class="recipe-image-input" style="display: none;" accept="image/*">
+                <button class="btn btn-primary change-image-btn">Fotoğrafı Değiştir</button>
+                <div class="card-body">
+                    <h5 class="card-title">${recipe.name}</h5>
+                    <div class="avg-time">Ortalama Hazırlanış Süresi: ${recipe.avgFinish} dk</div>
+                    <div class="receipeCreateDate">Oluşturulma Tarihi: <span style="font-weight:bold">${recipe.createDate}</span></div>
+                    <div class="receipeCreateDate">Son Güncelleme Tarihi: <span style="font-weight:bold">${recipe.updateDate}</span></div>
+                    <button class="btn-delete ${recipe.id}" id="btn-delete">Tarifi Sil</button>
+                </div>
+            </div>
+        `;
+        card.querySelector(".change-image-btn").addEventListener("click", function () {
+            event.stopPropagation();
+            const fileInput = card.querySelector(".recipe-image-input");
+            fileInput.click();
+        });
+
+        card.querySelector(".btn-delete").addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (confirm(currentRecipes.filter(i=>i.id==event.currentTarget.className.split(" ")[1])[0].name + " Tarifin silinecek. Onaylıyor musun?")) {
+                firebase.database().ref(event.currentTarget.className.split(" ")[1]).remove()
+                .then(function () {
+                    console.log("Tarif silindi!");
+                })
+                .catch(function (error) {
+                    throw new Error("delete tarif error", error).stack;
+                });
+            }
+
+        });
+
+        card.querySelector(".recipe-image-input").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    compressImage(e.target.result).then(compressedData => {
+                        const DATE_NOW = new Date().toLocaleDateString('tr-TR', { weekday: "short", year: "numeric", month: "short", day: "numeric" }) + " " + new Date().toLocaleTimeString('tr-TR');
+                        firebase.database().ref(card.querySelector(".recipe-image").id).update({ image: compressedData, updateDate: DATE_NOW }, (error) => {
+                            if (error) {
+                                console.log("ERROR", error);
+                            } else {
+                                console.log("fotoğraf güncellendi");
+                                document.getElementById("recipeImage").src = compressedData;
+                            }
+                        })
+                        //card.querySelector(".recipe-image").src = compressedData;
+
+                    }).catch(error => {
+                        console.error(error);
+                    });
+
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         recipeCards.appendChild(card);
     });
 }
 
+// Modal detayını doldurma
+$('#recipeModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var index = button.data('index');
+    var recipe = currentRecipes[index];
+    selectedRecipe = recipe;
+    var modal = $(this);
+    modal.find('.modal-title').text(recipe.name);
+    modal.find('#recipeImage').attr('src', recipe.image);
+
+    var detailsList = recipe.detail.split(',');
+    var detailsHtml = '';
+    detailsList.forEach((detail, detailIndex) => {
+        detailsHtml += `
+            <li>
+                <span class="detail-text">${detail.trim()}</span>
+                <button class="btn-edit-detail" data-detail-index="${detailIndex}">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </li>`;
+    });
+
+    modal.find('#recipeDetailList').html(detailsHtml);
+
+    // Butonlara tıklama olayı ekleyelim
+    modal.find('.btn-edit-detail').on('click', function () {
+        var detailIndex = $(this).data('detail-index');
+        var currentDetail = detailsList[detailIndex];
+        var newDetail = prompt("Detayı güncelleyin:", currentDetail);
+        if (newDetail) {
+            detailsList[detailIndex] = newDetail;
+            recipe.detail = detailsList.join(','); // Güncellenen detayları tekrar birleştirin
+            // Eğer currentRecipes bir global değişken ise ve sonradan kullanılacaksa güncelleyin:
+            currentRecipes[index] = recipe;
+            const DATE_NOW = new Date().toLocaleDateString('tr-TR', { weekday: "short", year: "numeric", month: "short", day: "numeric" }) + " " + new Date().toLocaleTimeString('tr-TR');
+
+            firebase.database().ref(recipe.id).update({ detail: recipe.detail, updateDate: DATE_NOW }, (error) => {
+                if (error) {
+                    console.log("ERROR", error);
+                } else {
+                    console.log(receipe.title + " detayı güncellendi");
+                    // Güncellenen detayları tekrar göstermek için modalı güncelleyin
+                    $(this).siblings('.detail-text').text(newDetail);
+                }
+            })
+
+        }
+    });
+});
+document.getElementById("recipeModalLabel").addEventListener("click", function () {
+    var newTitle = prompt("Tarif Başlığını güncelleyin:", this.textContent);
+    if (newTitle) {
+        const DATE_NOW = new Date().toLocaleDateString('tr-TR', { weekday: "short", year: "numeric", month: "short", day: "numeric" }) + " " + new Date().toLocaleTimeString('tr-TR');
+
+        firebase.database().ref(selectedRecipe.id).update({ name: newTitle, updateDate: DATE_NOW }, (error) => {
+            if (error) {
+                console.log("ERROR", error);
+            } else {
+                this.textContent = newTitle;
+            }
+        })
+    }
+});
+
+
 document.getElementById("recipeFilter").addEventListener("change", function () {
-    let selectedType = this.value;
+    selectedType = this.value;
     currentRecipes = data;  // Varsayılan olarak orijinal veri kümesini ayarla
 
     if (selectedType !== "all") {
@@ -142,23 +294,3 @@ document.getElementById("recipeFilter").addEventListener("change", function () {
 
     displayRecipes(currentRecipes);
 });
-
-// Modal detayını doldurma
-$('#recipeModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var index = button.data('index');
-    var recipe = currentRecipes[index];  // currentRecipes dizisini kullan
-    var modal = $(this);
-    modal.find('.modal-title').text(recipe.name);
-    modal.find('#recipeImage').attr('src', recipe.image);
-
-    var detailsList = recipe.detail.split(',');
-    var detailsHtml = '';
-    detailsList.forEach(detail => {
-        detailsHtml += `<li>${detail.trim()}</li>`;
-    });
-    modal.find('#recipeDetailList').html(detailsHtml);
-});
-
-// Başlangıçta tüm tarifleri göster
-displayRecipes(currentRecipes);

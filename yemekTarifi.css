@@ -109,11 +109,15 @@ body {
     font-weight: 500;
     text-align: center;
     animation: fadeIn 1s ease-out;
+    border: none;
+    background-color: transparent;
+    font-size: 25px;
 }
 
 .modal-header:hover .modal-title {
     transform: rotateX(5deg); /* Hover efekti ile başlığı hafifçe döndürelim */
     opacity: 0.9; /* Başlığın opaklığını azaltarak soluk bir efekt oluşturalım */
+
 }
 
 @keyframes fadeIn {
@@ -215,12 +219,6 @@ body {
     border-radius: 10px;     /* Kenarları yumuşatmak için */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);  /* Hafif bir gölge ekleyerek derinlik hissi katalım */
 }
-
-
-
-
-
-
 
 
 @media only screen and (max-width: 600px) {
@@ -341,6 +339,14 @@ body {
     padding: 5px 10px;
     border-radius: 5px;
 }
+.receipeCreateDate{
+    bottom: 10px;
+    right: 10px;
+    color: #a9a7a7;
+    padding: 5px 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
 
 /* Modal Stil */
 .modal-content {
@@ -369,4 +375,20 @@ body {
     /* Tamamen görünür yap */
 }
 
+.btn-edit-detail {
+    background: transparent;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: red;
+    width: 100%;
+    color: #ffffff; /* Beyaz yazı rengi */
+    border: none;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
 
